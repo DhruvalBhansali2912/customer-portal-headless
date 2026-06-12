@@ -10,6 +10,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
    useEffect(() => {
     const token = localStorage.getItem("token"); // Replace with your token key
@@ -19,45 +20,49 @@ export default function LoginPage() {
   }, [router]);
 
   const handleLogin = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setErrorMsg("");
+    e.preventDefault();
 
-  try {
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}wp-json/jwt-auth/v1/token`,
-      {
-        username: email,
-        password: password,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
+    if (isLoading) return;
+
+    setErrorMsg("");
+    setIsLoading(true);
+
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}wp-json/jwt-auth/v1/token`,
+        {
+          username: email,
+          password: password,
         },
-      }
-    );
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-    const { token, user_display_name,user_email } = response.data;
+      const { token, user_email } = response.data;
 
-    // Save token in localStorage or cookies
-    localStorage.setItem("token", token);
-    localStorage.setItem("valid_user_email", user_email);
+      localStorage.setItem("token", token);
+      localStorage.setItem("valid_user_email", user_email);
 
-    // Redirect
-    router.push("/dashboard");
-  } catch (error: any) {
-    console.error("Login Error:", error);
-    setErrorMsg("Invalid credentials. Please try again.");
-  }
-};
+      router.push("/dashboard");
+    } catch (error: any) {
+      console.error("Login Error:", error);
+      setErrorMsg("Invalid credentials. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="relative min-h-screen bg-[#f7f8fc] flex flex-col justify-center overflow-hidden">
       {/* Background logos (as in previous code)... */}
 
-	<img
+	    <img
         src={`${process.env.NEXT_PUBLIC_API_URL}wp-content/uploads/2025/04/Group-4.png`}
         alt="Decorative top left"
-        className="absolute top-0 left-0 w-[30%] h-[80%] pointer-events-none"
+        className="absolute top-0 left-0 w-[30%] h-[50%] pointer-events-none"
       />
       <img
         src={`${process.env.NEXT_PUBLIC_API_URL}wp-content/uploads/2025/04/logo-relayback.png`}
@@ -112,9 +117,36 @@ export default function LoginPage() {
             <div className="text-center">
               <button
                 type="submit"
-                className="lg:w-[60%] bg-[#462EFC] text-white font-semibold py-2 px-4 rounded-full cursor-pointer"
+                disabled={isLoading}
+                className="lg:w-[60%] bg-[#462EFC] text-white font-semibold py-2 px-4 rounded-full cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 mx-auto"
               >
-                Login
+                {isLoading ? (
+                  <>
+                    <svg
+                      className="animate-spin h-4 w-4"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                      />
+                    </svg>
+                    Logging in...
+                  </>
+                ) : (
+                  "Login"
+                )}
               </button>
             </div>
           </form>

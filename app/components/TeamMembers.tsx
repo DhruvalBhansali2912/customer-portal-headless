@@ -51,6 +51,8 @@ export default function TeamMembers() {
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: "asc" | "desc" } | null>(null);
   const { session, setSession, clearSession } = useSession();
 
+  const [addMemberUrl, setAddMemberUrl] = useState("");
+  const [addMemberLoading, setAddMemberLoading] = useState(true);
 
 
   const parseDateString = (dateStr:any) => {
@@ -62,66 +64,73 @@ export default function TeamMembers() {
     return isNaN(date.getTime()) ? null : date;
   };
 
-  useEffect(() => {
-    const fetchTeamMembers = async () => {
-      try {
-        var token = localStorage.getItem("token");
-        var userEmail = localStorage.getItem("valid_user_email");
-        if(localStorage.getItem("company")){
-          var response = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_URL}wp-json/custom/v1/teamdata`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-                authemail: `Bearer ${userEmail}`,
-                company: localStorage.getItem("company")
-              },
-            }
-          );
-        }
-        else{
-          var response = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_URL}wp-json/custom/v1/teamdata`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-                authemail: `Bearer ${userEmail}`,
-              },
-            }
-          );
-        }
-
-        const data = response.data;
-
-        if (typeof data.error !== "undefined" && data.error !== null) {
-          setMembers([]);
-        } else {
-          const transformed = data.map((member: any) => ({
-            entity_id: member.entity_id,
-            name: member.name,
-            email: member.email,
-            phone: member.phone,
-            startDate: member.start_date,
-            department: member.department,
-            supervisor: member.supervisor,
-            avatar: member.image,
-            position: member.position,
-          }));
-
-          setMembers(transformed);
-          const departments:any = Array.from(
-            new Set(transformed.map((m:any) => m.department).filter((d:any) => d && d.trim() !== ""))
-          ).sort();
-          setAvailableDepartments([ ...departments]);
-        }
-      } catch (error) {
-        console.error("Error fetching team members:", error);
-      } finally {
-        setLoading(false);
+  const fetchTeamMembers = async () => {
+    try {
+      var token = localStorage.getItem("token");
+      var userEmail = localStorage.getItem("valid_user_email");
+      if(localStorage.getItem("company")){
+        var response = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}wp-json/custom/v1/teamdata`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              authemail: `Bearer ${userEmail}`,
+              company: localStorage.getItem("company")
+            },
+          }
+        );
       }
+      else{
+        var response = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}wp-json/custom/v1/teamdata`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              authemail: `Bearer ${userEmail}`,
+            },
+          }
+        );
+      }
+
+      const data = response.data;
+
+      if (typeof data.error !== "undefined" && data.error !== null) {
+        setMembers([]);
+      } else {
+        const transformed = data.map((member: any) => ({
+          entity_id: member.entity_id,
+          name: member.name,
+          email: member.email,
+          phone: member.phone,
+          startDate: member.start_date,
+          department: member.department,
+          supervisor: member.supervisor,
+          avatar: member.image,
+          position: member.position,
+        }));
+
+        setMembers(transformed);
+        const departments:any = Array.from(
+          new Set(transformed.map((m:any) => m.department).filter((d:any) => d && d.trim() !== ""))
+        ).sort();
+        setAvailableDepartments([ ...departments]);
+      }
+    } catch (error) {
+      console.error("Error fetching team members:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const initializePage = async () => {
+      await Promise.all([
+        fetchTeamMembers(),
+        fetchAddMemberUrl(),
+      ]);
     };
 
-    fetchTeamMembers();
+    initializePage();
   }, []);
 
   useEffect(() => {
@@ -145,27 +154,6 @@ export default function TeamMembers() {
   };
 }, [isOpenD]);
 
-
-  // useEffect(() => {
-  //   function handleClickOutside(event:any) {
-  //     if (
-  //       feedbackModalRef.current &&
-  //       !feedbackModalRef.current.contains(event.target)
-  //     ) {
-  //       setFeedbackModalOpen(false);
-  //     }
-  //   }
-
-  //   if (feedbackModalOpen) {
-  //     document.addEventListener("mousedown", handleClickOutside);
-  //   } else {
-  //     document.removeEventListener("mousedown", handleClickOutside);
-  //   }
-
-  //   return () => {
-  //     document.removeEventListener("mousedown", handleClickOutside);
-  //   };
-  // }, [feedbackModalOpen]);
 
   useEffect(() => {
     const fetchFeedbackTypes = async () => {
@@ -239,46 +227,40 @@ export default function TeamMembers() {
     return filteredMembers.slice(start, start + rowsPerPage);
   }, [filteredMembers, currentPage]);
 
-  const handleAddMember = async() => {
+  const fetchAddMemberUrl = async () => {
     try {
-        var token = localStorage.getItem("token");
-        var userEmail = localStorage.getItem("valid_user_email");
-        if(localStorage.getItem("company")){
-          var response = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_URL}wp-json/custom/v1/addnewmember`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-                authemail: `Bearer ${userEmail}`,
-                company: localStorage.getItem("company")
-              },
-            }
-          );
-        }
-        else{
-          var response = await axios.get(
-            `${process.env.NEXT_PUBLIC_API_URL}wp-json/custom/v1/addnewmember`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-                authemail: `Bearer ${userEmail}`,
-              },
-            }
-          );
-        }
+      const token = localStorage.getItem("token");
+      const userEmail = localStorage.getItem("valid_user_email");
+      const company = localStorage.getItem("company");
 
-        const data = response.data;
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}wp-json/custom/v1/addnewmember`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            authemail: `Bearer ${userEmail}`,
+            ...(company ? { company } : {}),
+          },
+        }
+      );
 
-       if(data.success){
-        var redirecturl = data.message;
-        //console.log(redirecturl)
-        window.location.href= redirecturl;
-       }
-      } catch (error) {
-        console.error("Error redirecting to add new member page", error);
-      } finally {
-        
+      if (response.data?.success) {
+        setAddMemberUrl(response.data.message);
       }
+    } catch (error) {
+      console.error("Error fetching add member URL", error);
+    } finally {
+      setAddMemberLoading(false);
+    }
+  };
+
+  const handleAddMember = () => {
+    if (!addMemberUrl) {
+      console.error("Add member URL not loaded yet");
+      return;
+    }
+
+    window.location.href = addMemberUrl;
   };
 
 
@@ -301,18 +283,20 @@ export default function TeamMembers() {
         </h2>
         <button
           onClick={handleAddMember}
+          disabled={addMemberLoading || !addMemberUrl}
           className="hover:bg-[#462EFC] text-[#462EFC] bg-white border border-[#462EFC] hover:shadow-md hover:shadow-[#462EFC]/40 font-semibold rounded-full px-2 py-1 text-xs transition duration-150 ease-in-out hover:text-white cursor-pointer block sm:hidden"
         >
-          Add new member
+          {addMemberLoading ? "Loading..." : "Add new member"}
         </button>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 mt-1 mr-1 p-1 w-full sm:items-center sm:justify-end">
         <button
           onClick={handleAddMember}
+          disabled={addMemberLoading || !addMemberUrl}
           className="hover:bg-[#462EFC] text-[#462EFC] bg-white border border-[#462EFC] hover:shadow-md hover:shadow-[#462EFC]/40 font-semibold rounded-full px-6 py-2 text-sm transition duration-150 ease-in-out hover:text-white cursor-pointer hidden sm:block"
         >
-          Add new member
+          {addMemberLoading ? "Loading..." : "Add new member"}
         </button>
 
          <div className="relative order-1 sm:order-2">

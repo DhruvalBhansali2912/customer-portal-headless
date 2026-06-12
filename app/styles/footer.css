@@ -1,0 +1,199 @@
+@import "tailwindcss";
+
+.footer-section {
+  @apply mx-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-6;
+}
+
+.footer-line {
+  @apply mx-12;
+}
+
+.tnc {
+  @apply mx-12;
+}
+
+.footer-desktop {
+  @apply flex flex-col items-center md:items-end
+}
+
+.footer-line-mobile {
+    @apply hidden;
+}
+
+.footer-line hr {
+  @apply h-1 text-[#393670];
+}
+
+.footer-extra-wrapper {
+  @apply md:col-span-1 flex flex-col md:flex-col items-center md:items-end gap-8 mt-8;
+}
+
+/* Mobile wrapper (keeps desktop untouched) */
+.footer-mobile-wrap {
+  @apply hidden;
+}
+
+.footer-cta-btn {
+  @apply bg-[#3333ff] text-white px-5 py-2 mb-2 rounded-full text-sm font-medium hover:bg-[#5248d6] transition;
+}
+
+/* SOC2 + Relay Logo row */
+.footer-mobile-logo-row {
+  @apply grid grid-cols-2 items-start w-full;
+}
+
+.footer-soc2-img {
+  @apply h-14 items-start;
+}
+
+.footer-relay-logo {
+  @apply h-10 mx-auto;
+}
+
+/* Social icons row (centered) */
+.footer-social-row {
+  @apply flex justify-center space-x-4 text-xl mt-2;
+}
+
+.tnc-desktop {
+  @apply mt-6 text-[13px] tracking-[-0.025em] text-white flex flex-col md:flex-row items-center justify-between gap-2
+}
+
+.tnc-mobile {
+  @apply hidden;
+}
+
+
+/* Accordion Header */
+.footer-accordion-header {
+  @apply flex justify-between items-center w-full text-left mb-3;
+}
+
+/* Icon */
+.footer-accordion-icon {
+  @apply text-white text-lg;
+}
+
+/* Mobile collapsed by default */
+.footer-accordion-content {
+  display: none;
+}
+
+/* When opened */
+.footer-accordion-content.open {
+  @apply block space-y-2 text-sm text-left;
+}
+
+@media (min-width: 1900px) {
+  .footer-section {
+    margin-left: 11rem;
+    margin-right: 11rem;
+    gap: 2rem 2rem;
+  }
+
+  .footer-line {
+    margin-left: 11rem;
+    margin-right: 11rem;
+  }
+  .tnc-desktop {
+    margin-left: 11rem;
+    margin-right: 11rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .footer-section {
+    @apply mb-6 mx-6;
+  }
+
+  .tnc-desktop {
+    @apply hidden;
+  }
+  
+  .tnc-mobile {
+    @apply mt-6 mx-12 mb-6 text-xs text-gray-300 flex flex-col md:flex-row items-center justify-between gap-2;
+  }
+
+  .footer-line {
+    @apply mx-6;
+  }
+
+  /* CTA full width & centered */
+  .footer-mobile-cta {
+    @apply w-full flex justify-start;
+  }
+
+  .footer-line-mobile {
+    @apply block mt-2;
+  }
+  .footer-line-mobile hr {
+    @apply h-1 text-[#393670];
+  }
+
+  .footer-desktop {
+    @apply hidden;
+  }
+
+  .footer-mobile-wrap {
+    @apply block flex flex-row items-center;
+  }
+
+  .footer-mobile-logo-row {
+    @apply flex flex-col items-start;
+  }
+
+  .footer-social-row {
+    @apply justify-start items-start;
+  }
+
+  .footer-relay-logo {
+    @apply h-12;
+  }
+}
+
+
+
+/* Always open on desktop */
+@media (min-width: 900px) {
+  .footer-accordion-icon {
+    display: none;
+  }
+  .footer-accordion-content {
+    display: block !important;
+  }
+}
+
+@media (min-width: 2100px) {
+  .footer-section {
+    margin-left: 23vw;
+    margin-right: 23vw;
+    gap: 3rem 3rem;
+  }
+
+  .footer-line {
+    margin-left: 23vw;
+    margin-right: 23vw;
+  }
+  .tnc-desktop {
+    margin-left: 23vw;
+    margin-right: 23vw;
+  }
+}
+
+
+@media (min-resolution: 1.5dppx) and (max-resolution: 1.99dppx) {
+  .footer-section {
+    margin-left: 2rem;
+    margin-right: 2rem;
+    gap: 0.3rem 0.3rem;
+  }
+
+  .footer-line {
+    margin-left: 2rem;
+    margin-right: 2rem;
+  }
+  .tnc-desktop {
+    margin-left: 2rem;
+    margin-right: 2rem;
+  }
+}
