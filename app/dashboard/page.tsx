@@ -1,46 +1,49 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "../components/header";
 import TeamTabs from "../components/TeamTabs";
 import Footer from "../components/Footer";
+import { isValidToken } from "../utils/auth";
 
 export default function DashboardPage() {
   const router = useRouter();
+  const [authorized, setAuthorized] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("token"); // Adjust key if needed
+    const token = localStorage.getItem("token");
 
     if (!token) {
-      router.push("/");
+      router.replace("/");
+      return;
     }
-    else{
-      try {
-        // Decode JWT token
-        const payloadBase64 = token.split('.')[1];
-        const decodedPayload = JSON.parse(atob(payloadBase64));
 
-        // Check for expiration
-        const currentTime = Math.floor(Date.now() / 1000); // in seconds
-        if (decodedPayload.exp && decodedPayload.exp < currentTime) {
-          console.log("Token expired");
-          localStorage.removeItem("token");
-          router.push("/");
-        }
-      } catch (error) {
-        console.error("Invalid token format:", error);
-        localStorage.removeItem("token");
-        router.push("/");
-      }
+    if (!isValidToken(token)) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("valid_user_email");
+      router.replace("/");
+      return;
     }
+    setAuthorized(true);
   }, [router]);
+
+  if (!authorized) {
+    return (
+      <>
+      <div className="min-h-screen bg-[#F5F7FA] flex items-center justify-center">
+        Loading...
+      </div>
+      <Footer/>
+      </>
+    );
+  }
 
   return (
     <main className="min-h-screen flex flex-col bg-[#F5F7FA]">
-        <Header />
-        <div className="flex-grow sm:px-12 sm:py-6 px-6 py-4">
-      <TeamTabs/>
+      <Header />
+      <div className="grow sm:px-12 sm:py-6 px-6 py-4">
+        <TeamTabs/>
       </div>
       <Footer/>
     </main>

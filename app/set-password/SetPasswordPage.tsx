@@ -8,7 +8,7 @@ import Header from "../components/header";
 
 export default function SetPasswordPage() {
     const router = useRouter();
-    const [params, setParams] = useState(false);
+    // const [params, setParams] = useState(false);
     const [confirmpassword, setConfirmpassword] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
     const [companyid, setCompanyid] = useState("");
@@ -31,13 +31,14 @@ export default function SetPasswordPage() {
     
 
   useEffect(() => {
-    if (company_id != '' && email != '') {
-      setParams(true);
-      setCompanyid(company_id);
+    if (email) {
       setUseremail(email);
     }
 
-  }, [router]);
+    if (company_id) {
+      setCompanyid(company_id);
+    }
+  }, [email, company_id]);
 
   const validatePassword = (password: string, confirm: string) => {
   const validations = {
@@ -171,8 +172,18 @@ export default function SetPasswordPage() {
             <div className="text-center">
               <button
                 type="submit"
-                className="lg:w-[60%] bg-[#462EFC] text-white font-semibold py-2 px-4 rounded-full cursor-pointer"
-                disabled={rules || !params}
+                disabled={rules}
+                className="
+                  lg:w-[60%]
+                  bg-[#462EFC]
+                  text-white
+                  font-semibold
+                  py-2
+                  px-4
+                  rounded-full
+                  disabled:bg-gray-400
+                  disabled:cursor-not-allowed
+                "
               >
                 Set Password
               </button>

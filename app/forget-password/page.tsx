@@ -87,7 +87,7 @@ export default function ForgetPasswordPage() {
             </div>
 
             <div className="text-right">
-              <a href="/dashboard" className="text-sm text-[#4C00C2] hover:underline">Back to login</a>
+              <a href="/" className="text-sm text-[#4C00C2] hover:underline">Back to login</a>
             </div>
             {errorMsg && (
               <p className="text-red-500 text-sm text-center">{errorMsg}</p>

@@ -4,6 +4,7 @@ import React, { useState,useEffect  } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import Footer from "./components/Footer";
+import { isValidToken } from "./utils/auth";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -12,10 +13,11 @@ export default function LoginPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-   useEffect(() => {
-    const token = localStorage.getItem("token"); // Replace with your token key
-    if (token) {
-      router.push("/dashboard");
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token && isValidToken(token)) {
+      router.replace("/dashboard");
     }
   }, [router]);
 
@@ -70,7 +72,7 @@ export default function LoginPage() {
         className="absolute bottom-0 right-0 w-[50%] h-[90%] pointer-events-none"
       />
 
-      <div className="flex-grow flex items-center justify-center z-10 sm:p-0 p-4">
+      <div className="grow flex items-center justify-center z-10 sm:p-0 p-4">
         <div className="bg-white rounded-2xl shadow-lg p-8 w-full max-w-md text-center m-8">
           <h2 className="text-4xl font-bold text-[#190089] mb-6">Login page</h2>
 
