@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState,useEffect  } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import Footer from "./components/Footer";
@@ -12,13 +12,36 @@ export default function LoginPage() {
   const [errorMsg, setErrorMsg] = useState("");
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const checkAuth = () => {
+      const token = localStorage.getItem("token");
+      if (token && isValidToken(token)) {
+        router.replace("/dashboard");
+      } else {
+        setCheckingAuth(false);
+      }
+    };
 
-    if (token && isValidToken(token)) {
-      router.replace("/dashboard");
-    }
+    checkAuth();
+
+    const handlePageShow = (e: PageTransitionEvent) => {
+      if (e.persisted) {
+        const token = localStorage.getItem("token");
+        if (token && isValidToken(token)) {
+          window.location.replace("/dashboard/");
+        } else {
+          setCheckingAuth(false);
+        }
+      }
+    };
+
+    window.addEventListener("pageshow", handlePageShow);
+
+    return () => {
+      window.removeEventListener("pageshow", handlePageShow);
+    };
   }, [router]);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -40,7 +63,7 @@ export default function LoginPage() {
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       const { token, user_email } = response.data;
@@ -48,7 +71,7 @@ export default function LoginPage() {
       localStorage.setItem("token", token);
       localStorage.setItem("valid_user_email", user_email);
 
-      router.push("/dashboard");
+      router.replace("/dashboard");
     } catch (error: any) {
       console.error("Login Error:", error);
       setErrorMsg("Invalid credentials. Please try again.");
@@ -57,11 +80,40 @@ export default function LoginPage() {
     }
   };
 
+  if (checkingAuth) {
+    return (
+      <>
+        <div className="min-h-screen bg-[#F5F7FA] text-[#202328] flex items-center justify-center">
+          <svg
+            className="animate-spin h-10 w-10 text-[#462EFC]"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            />
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+            />
+          </svg>
+        </div>
+      </>
+    );
+  }
+
   return (
     <div className="relative min-h-screen bg-[#f7f8fc] flex flex-col justify-center overflow-hidden">
       {/* Background logos (as in previous code)... */}
 
-	    <img
+      <img
         src={`${process.env.NEXT_PUBLIC_API_URL}wp-content/uploads/2025/04/Group-4.png`}
         alt="Decorative top left"
         className="absolute top-0 left-0 w-[30%] h-[50%] pointer-events-none"
@@ -78,7 +130,12 @@ export default function LoginPage() {
 
           <form onSubmit={handleLogin} className="space-y-4 text-left">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Email
+              </label>
               <div className="mt-1 flex items-center border border-gray-300 rounded-full px-3 py-2 bg-[#F6F6F6]">
                 <span className="text-gray-500 mr-2">📧</span>
                 <input
@@ -94,7 +151,12 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Password
+              </label>
               <div className="mt-1 flex items-center border border-gray-300 rounded-full px-3 py-2 bg-[#F6F6F6]">
                 <span className="text-gray-500 mr-2">🔑</span>
                 <input
@@ -114,7 +176,12 @@ export default function LoginPage() {
             )}
 
             <div className="text-right">
-              <a href="/forget-password" className="text-sm text-[#4C00C2] hover:underline">Forgot password?</a>
+              <a
+                href="/forget-password"
+                className="text-sm text-[#4C00C2] hover:underline"
+              >
+                Forgot password?
+              </a>
             </div>
             <div className="text-center">
               <button
@@ -155,8 +222,7 @@ export default function LoginPage() {
         </div>
       </div>
 
-      
-      <Footer/>
+      <Footer />
     </div>
   );
 }

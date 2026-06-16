@@ -32,7 +32,7 @@ export default function Header() {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("company");
-    router.push("/");
+    router.replace("/");
   };
 
   const handleMainPage = () => {
@@ -74,22 +74,6 @@ export default function Header() {
   }, []);
 
   const modalRef = useRef<HTMLDivElement>(null);
-
-// useEffect(() => {
-//   function handleClickOutside(event: MouseEvent) {
-//     if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
-//       setShowSupportModal(false);
-//     }
-//   }
-
-//   if (showSupportModal) {
-//     document.addEventListener("mousedown", handleClickOutside);
-//   }
-
-//   return () => {
-//     document.removeEventListener("mousedown", handleClickOutside);
-//   };
-// }, [showSupportModal]);
 
 useEffect(() => {
   function handleClickOutside(event: MouseEvent) {

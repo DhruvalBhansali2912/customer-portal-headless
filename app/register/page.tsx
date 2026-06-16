@@ -4,12 +4,10 @@ import React, { useState,useEffect  } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import Footer from "../components/Footer";
-import Header from "../components/header";
 
 export default function RegisterPage() {
     const router = useRouter();
     const [email, setEmail] = useState("");
-    const [company, setCompany] = useState("");
     const [errorMsg, setErrorMsg] = useState("");
     const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState([0,'Select a Company']);
@@ -34,12 +32,12 @@ export default function RegisterPage() {
         if (decodedPayload.exp && decodedPayload.exp < currentTime) {
           console.log("Token expired");
           localStorage.removeItem("token");
-          router.push("/");
+          router.replace("/");
         }
       } catch (error) {
         console.error("Invalid token format:", error);
         localStorage.removeItem("token");
-        router.push("/");
+        router.replace("/");
       }
     }
 
