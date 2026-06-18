@@ -136,7 +136,7 @@ export default function Footer() {
               openSection === 4 ? "open" : ""
             } space-y-2 text-sm text-left`}
           >
-            <li><Link href={`${VITE_WEB_URL}/about/"`}onClick={handleFooterNavigate} className="hover:underline">About Us</Link></li>
+            <li><Link href={`${VITE_WEB_URL}/about/`}onClick={handleFooterNavigate} className="hover:underline">About Us</Link></li>
             <li><Link href={`${VITE_WEB_URL}/how-it-works/`} onClick={handleFooterNavigate} className="hover:underline">How It Works</Link></li>
             <li><Link href={`${VITE_WEB_URL}/our-offices/`} onClick={handleFooterNavigate} className="hover:underline">Our Offices</Link></li>
             <li><Link href={`${VITE_WEB_URL}/about#leadership`} className="hover:underline">Leadership Team</Link></li>
