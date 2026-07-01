@@ -67,7 +67,7 @@ export default function Footer() {
               openSection === 2 ? "open" : ""
             } space-y-2 text-sm text-left`}
           >
-            <li><Link href={`${VITE_WEB_URL}/talent/`} onClick={handleFooterNavigate} className="hover:underline">Dedicated Talent in a Relay Office</Link></li>
+            <li><Link href={`${VITE_WEB_URL}/staff-augmentation/`}  onClick={handleFooterNavigate} className="hover:underline">Staff Augmentation</Link></li>
             <li><Link href={`${VITE_WEB_URL}/opening-your-overseas-office/`} onClick={handleFooterNavigate} className="hover:underline">Setting Up Your Overseas Office</Link></li>
             <li><Link href={`${VITE_WEB_URL}/global-teams-consulting/`} onClick={handleFooterNavigate} className="hover:underline">Consulting & Change Management</Link></li>
             <li><Link href={`${VITE_WEB_URL}/international-payroll-service/`} onClick={handleFooterNavigate} className="hover:underline">International Payroll Service</Link></li>
